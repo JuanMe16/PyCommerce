@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  dev-db:
+    image: postgres:13
+    ports:
+      - 5434:5432
+    environment:
+      POSTGRES_USER: dj-dev
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: commerce
+    networks:
+      - dj-backend
+
+networks:
+  dj-backend:
