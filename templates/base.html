@@ -8,7 +8,7 @@
     <link rel="icon" type="image/x-icon" href="{% static 'images/django.icon.png' %}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
     <script src="{% static 'js/bootstrap.js' %}"></script>
-    <title>Django Commerce</title>
+    <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
     {% include 'navbar.html' %}
@@ -24,5 +24,78 @@
 
     {% block content %}
     {% endblock %}
+
+    <!-- Sign In Modal -->
+    <div class="modal fade" id="signIn" tabindex="-1" aria-labelledby="SIModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h1 class="modal-title fs-5" id="SIModalLabel">Iniciar Sesión</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'sign-in' %}" method="POST">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="exampleInputNameSI" class="form-label">Dirección de correo</label>
+                    <input name="username" placeholder="John" type="text" class="form-control" id="exampleInputNameSI" aria-describedby="nameHelpSI">
+                    <div id="nameHelpSI" class="form-text">Nunca compartiremos tu información.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="exampleInputPasswordSI" class="form-label">Contraseña</label>
+                    <input name="password" placeholder="1234" type="password" class="form-control" id="exampleInputPasswordSI">
+                </div>
+                <div class="mb-3 form-check">
+                    <input name="remember" type="checkbox" class="form-check-input" id="exampleCheckRemember">
+                    <label class="form-check-label" for="exampleCheckRemember">Recuerdame</label>
+                </div>
+                <button type="submit" class="btn btn-primary mb-3">Enviar</button>
+                <div class="mb-3">
+                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#signUp">¿No tienes una cuenta todavía?</button>
+                </div>
+                </form>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Sign Up Modal -->
+    <div class="modal fade" id="signUp" tabindex="-1" aria-labelledby="SUModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h1 class="modal-title fs-5" id="SUModalLabel">Abrir una nueva cuenta</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'sign-up' %}" method="POST">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="exampleInputName" class="form-label">Nombre</label>
+                    <input name="username" placeholder="John" type="text" class="form-control" id="exampleInputName">
+                </div>
+                <div class="mb-3">
+                    <label for="exampleInputEmailSU" class="form-label">Dirección de correo</label>
+                    <input name="email" placeholder="John@gmail.com" type="email" class="form-control" id="exampleInputEmailSU" aria-describedby="emailHelpSU">
+                    <div id="emailHelpSU" class="form-text">Nunca compartiremos tu información.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="exampleInputPasswordSU" class="form-label">Contraseña</label>
+                    <input name="password" placeholder="1234" type="password" class="form-control" id="exampleInputPasswordSU">
+                </div>
+                <div class="mb-3">
+                    <label for="exampleInputCPassword" class="form-label">Confirmar Contraseña</label>
+                    <input name="cpassword" placeholder="1234" type="password" class="form-control" id="exampleInputCPassword">
+                </div>
+                <div class="mb-3 form-check">
+                    <input name="terms" type="checkbox" class="form-check-input" id="exampleCheckTerms">
+                    <label class="form-check-label" for="exampleCheckTerms">Acepto Terminos y Condiciones</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Enviar</button>
+                </form>
+            </div>
+        </div>
+        </div>
+    </div>
 </body>
 </html>
