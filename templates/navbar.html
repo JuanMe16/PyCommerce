@@ -6,17 +6,16 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                <li class="nav-item"><a class="nav-link active" aria-current="page" href="#!">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="#!">About</a></li>
+                <li class="nav-item"><a class="nav-link active" aria-current="page" href="/">Inicio</a></li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
+                    <button class="nav-link active dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Categorias</button>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="#!">All Products</a></li>
-                        <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" href="#!">Popular Items</a></li>
-                        <li><a class="dropdown-item" href="#!">New Arrivals</a></li>
+                        {% for category in nav_categories %}
+                        <li><a class="dropdown-item" href="{% url 'category' category.id %}">{{category.name}}</a></li>
+                        {% endfor %}
                     </ul>
                 </li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'about-us' %}">Sobre nosotros</a></li>
             </ul>
             <form class="d-flex">
                 {% if not request.user.is_authenticated %}
@@ -25,6 +24,12 @@
                     Usuario
                 </button>
                 {% else %}
+                {% if request.user.is_staff %}
+                <a type="button" class="btn order-1 btn-outline-dark ms-1" href="{% url 'admin:index' %}">
+                    <i class="bi-wrench-adjustable"></i>
+                    Panel Admin
+                </a>
+                {% endif %}
                 <a type="button" class="btn order-1 btn-outline-dark ms-1" href="{% url 'sign-out' %}">
                     <i class="bi-door-open-fill"></i>
                     Salir
@@ -32,7 +37,7 @@
                 {% endif %}
                 <button class="btn btn-outline-dark" type="submit">
                     <i class="bi-cart-fill me-1"></i>
-                    <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
+                    <span class="badge bg-dark text-white ms-1 rounded-pill">{{cart_products}}</span>
                 </button>
             </form>
         </div>

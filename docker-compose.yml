@@ -5,9 +5,9 @@ services:
     ports:
       - 5434:5432
     environment:
-      POSTGRES_USER: dj-dev
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root
-      POSTGRES_DB: commerce
+      POSTGRES_DB: postgres
     networks:
       - dj-backend
 

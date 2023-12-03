@@ -1,4 +1,5 @@
 import os
+from .managers import UserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -9,12 +10,14 @@ def locate_profile_photo(instance, filename: str):
 
 # Create your models here.
 class User(AbstractUser):
-    username = models.CharField(max_length=40, unique=False)
+    username = None
     email = models.EmailField(unique=True)
     photo = models.ImageField(
         upload_to=locate_profile_photo, default="profile/default.png", blank=True
     )
     stripe_id = models.TextField(blank=True, null=True)
+
+    objects = UserManager()
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []

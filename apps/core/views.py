@@ -6,7 +6,6 @@ from apps.core.models import User
 from django.contrib.auth import authenticate, login, logout
 from .utils import create_customer
 
-
 class SignUpView(View):
     """
     View of Sign Up functionality, receives the form of the SignUp modal.
@@ -24,7 +23,7 @@ class SignUpView(View):
             return render(request, "core/index.html")
 
         if (terms == "on") and (username and email and password):
-            new_user = User.objects.create_user(username, email, password)
+            new_user = User.objects.create_user(email, password)
             customer_id = create_customer(username, email)
             new_user.stripe_id = customer_id
             new_user.save()

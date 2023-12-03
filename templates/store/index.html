@@ -8,21 +8,33 @@
 <header class="bg-dark py-5">
     <div class="container px-4 px-lg-5 my-5">
         <div class="text-center text-white">
-            <h1 class="display-4 fw-bolder">🦎 Marketplace</h1>
+            <h1 class="display-4 fw-bolder">🦎🛍️ {{category_name}}</h1>
             <p class="lead fw-normal text-white-50 mb-0">¡✨ Nuestra tienda, compra con estilo!</p>
         </div>
     </div>
 </header>
 <!-- Products Section-->
 <section class="py-5">
+    <div>
+        <form class="container px-4 px-lg-5 d-flex">
+            <div class="me-3">
+                <button class="btn btn-outline-dark dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Filtrar por</button>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <li class="dropdown-item">Precio: Menor a mayor</li>
+                    <li class="dropdown-item">Precio: Mayor a menor</li>
+                </ul>
+            </div>
+            <button class="btn btn-outline-primary" type="submit">Buscar</button>
+        </form>
+    </div>
     <div class="container px-4 px-lg-5 mt-5">
-        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-start">
             <!-- Product Template -->
             {% for product in products %}
             <div class="col mb-5">
                 <div class="card h-100">
                     <!-- Product Image Template-->
-                    <img height="400" class="card-img-top" src="media/{{product.photo}}" alt="{{product.name}}" />
+                    <img class="card-img-top" style="max-height: 340px;" src="/media/{{product.photo}}" alt="{{product.name}}" />
                     <!-- Product Details Template -->
                     <div class="card-body p-4">
                         <div class="text-center">
@@ -34,7 +46,7 @@
                     </div>
                     <!-- Product Actions Templat e-->
                     <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                        <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{% url 'product' product.id %}">Check now</a></div>
+                        <div class="text-center"><a class="btn btn-outline-dark fw-bolder mt-auto" href="{% url 'product' product.id %}">Check now</a></div>
                     </div>
                 </div>
             </div>
@@ -42,8 +54,4 @@
         </div>
     </div>
 </section>
-<!-- Footer-->
-<footer class="py-5 bg-dark">
-    <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Django Commerce 2023</p></div>
-</footer>
 {% endblock %}

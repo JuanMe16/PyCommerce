@@ -8,6 +8,21 @@ def locate_product_img(instance, filename: str):
     return os.path.join(f"store/category_{instance.category.id}", filename)
 
 
+class Address(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    country = models.CharField(max_length=120)
+    city = models.CharField(max_length=120)
+    street = models.CharField(max_length=140)
+    postal_code = models.IntegerField()
+    note = models.TextField()
+
+    class Meta:
+        db_table = "addresses"
+
+    def __str__(self):
+        return self.country + self.city + self.street
+
+
 class Category(models.Model):
     name = models.CharField(max_length=60)
     description = models.TextField()
@@ -36,7 +51,19 @@ class Product(models.Model):
         return self.name
 
 
-class Comment(models.Model):
+class Cart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+
+    class Meta:
+        db_table = "carts"
+
+    def __str__(self):
+        return self.user + " Cart"
+
+
+class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     qualification = models.IntegerField()

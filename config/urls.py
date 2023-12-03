@@ -24,3 +24,7 @@ urlpatterns = [
     path('auth/', include('apps.core.urls')),
     path('', include('apps.store.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+admin.site.index_title = "Django Marketplace"
+admin.site.site_header = "Django Market Admin"
+admin.site.site_title = "Panel"
