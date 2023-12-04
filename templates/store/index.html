@@ -16,16 +16,13 @@
 <!-- Products Section-->
 <section class="py-5">
     <div>
-        <form class="container px-4 px-lg-5 d-flex">
-            <div class="me-3">
-                <button class="btn btn-outline-dark dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Filtrar por</button>
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <li class="dropdown-item">Precio: Menor a mayor</li>
-                    <li class="dropdown-item">Precio: Mayor a menor</li>
-                </ul>
-            </div>
-            <button class="btn btn-outline-primary" type="submit">Buscar</button>
-        </form>
+        <div class="container px-4 px-lg-5 d-flex">
+            <button class="btn btn-outline-dark dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Filtrar por</button>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li class="dropdown-item"><a class="nav-link" href="?price_order=asc">Precio: Menor a mayor</a></li>
+                <li class="dropdown-item"><a class="nav-link" href="?price_order=des">Precio: Mayor a menor</a></li>
+            </ul>
+        </div>
     </div>
     <div class="container px-4 px-lg-5 mt-5">
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-start">

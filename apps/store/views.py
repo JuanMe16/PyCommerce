@@ -20,16 +20,30 @@ class BaseTemplateView(TemplateView):
         return context
 
 
-class StoreHomeView(BaseTemplateView):
+class SearchTemplateView(BaseTemplateView):
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        price_order = self.request.GET.get("price_order", None)
+        if price_order == "asc":
+            context["products"] = Product.objects.order_by("price")
+        elif price_order == "des":
+            context["products"] = Product.objects.order_by("-price")
+        else:
+            context["products"] = Product.objects
+
+        return context
+
+
+class StoreHomeView(SearchTemplateView):
     template_name = "store/index.html"
 
     def get_context_data(self, **kwargs: Any):
         context = super().get_context_data(**kwargs)
-        context["products"] = Product.objects.values()
+        context["products"] = context["products"].values()
         return context
 
 
-class CategoryView(BaseTemplateView):
+class CategoryView(SearchTemplateView):
     template_name = "store/index.html"
 
     def get_context_data(self, **kwargs: Any):
@@ -37,7 +51,7 @@ class CategoryView(BaseTemplateView):
         category_id = kwargs.get("category_id", 0)
         try:
             category = Category.objects.get(id=category_id)
-            context["products"] = Product.objects.filter(category=category).values()
+            context["products"] = context["products"].filter(category=category).values()
             context["category_name"] = category.name
         except:
             self.template_name = "not_found.html"
@@ -68,6 +82,27 @@ class AboutView(BaseTemplateView):
     template_name = "about_us.html"
 
 
+class CheckoutView(BaseTemplateView):
+    template_name = "store/checkout.html"
+
+    def get_context_data(self, **kwargs: Any):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        checkout_products = Cart.objects.filter(user=user)
+        products = [
+            Product.objects.get(id=product["product_id"])
+            for product in checkout_products.values()
+        ]
+        ziped_products = zip(checkout_products, products)
+        zip_sum = zip(checkout_products, products)
+        context["count"] = checkout_products.count()
+        context["checkout_products"] = ziped_products
+        context["subtotal"] = sum(
+            [product_dict.quantity * product.price for product_dict, product in zip_sum]
+        )
+        return context
+
+
 class AddCartView(View):
     def print_message(self, request):
         messages.warning(request, "No tenemos disponible esa cantidad de ese producto")
@@ -75,10 +110,6 @@ class AddCartView(View):
     def post(self, request: HttpRequest):
         product_id = int(request.POST.get("product_id", None))
         quantity = int(request.POST.get("quantity", None))
-
-        if not self.request.user.is_authenticated:
-            messages.warning(request, "Debes crear una cuenta para comprar.")
-            return redirect(f"/product/{product_id}")
 
         if not product_id or (not quantity or quantity < 0):
             messages.warning(request, "Datos invalidos para añadir al carrito.")
@@ -114,3 +145,6 @@ class AddCartView(View):
             )
 
         return redirect(f"/product/{product_id}")
+
+class SaveAddressView(View):
+    pass
