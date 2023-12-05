@@ -6,6 +6,7 @@ from apps.core.models import User
 from django.contrib.auth import authenticate, login, logout
 from .utils import create_customer
 
+
 class SignUpView(View):
     """
     View of Sign Up functionality, receives the form of the SignUp modal.

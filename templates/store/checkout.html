@@ -48,14 +48,17 @@
                         </div>
                       </div>
                       <div class="d-flex flex-row align-items-center">
-                        <div style="width: 50px">
+                        <a href="{% url 'add-purchase' checkout_product.id %}" class="btn btn-outline-primary me-1"><i class="bi bi-plus"></i></a>
+                        <a href="{% url 'reduce-purchase' checkout_product.id %}" class="btn btn-outline-danger"><i class="bi bi-dash"></i></a>
+                      </div>
+                      <div class="d-flex flex-row align-items-center">
+                        <div class="w-50">
                           <h5 class="fw-normal mb-0">{{checkout_product.quantity}}</h5>
                         </div>
                         <div style="width: 80px">
                           <h5 class="mb-0">${{product.price}}</h5>
                         </div>
-                        <a href="#!" class="btn btn-outline-dark" style="color: #cecece"
-                          ><i class="bi bi-trash-fill"></i></a>
+                        <a href="{% url 'delete-product' checkout_product.id %}" class="btn btn-outline-danger"><i class="bi bi-trash-fill"></i></a>
                       </div>
                     </div>
                   </div>
@@ -73,7 +76,7 @@
                       <i class="bi bi-mailbox2-flag ms-2"></i>
                     </div>
 
-                    <form action="{% url 'save-address' %}" method="POST" class="mt-4">
+                    <form action="" method="POST" class="mt-4">
                       {% csrf_token %}
                       <div class="form-outline form-white mb-4">
                         <input

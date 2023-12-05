@@ -7,6 +7,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
     <link rel="icon" type="image/x-icon" href="{% static 'images/django.icon.png' %}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="{% static 'js/bootstrap.js' %}"></script>
     <script src="{% static 'js/bootstrap.bundle.js' %}"></script>
     <title>{% block title %}{% endblock %}</title>
@@ -31,8 +32,8 @@
         <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-            <h1 class="modal-title fs-5" id="SIModalLabel">Iniciar Sesión</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h1 class="modal-title fs-5" id="SIModalLabel">Iniciar Sesión</h1>
+                <button id="signInDismiss" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form action="{% url 'sign-in' %}" method="POST">
@@ -51,10 +52,10 @@
                     <label class="form-check-label" for="exampleCheckRemember">Recuerdame</label>
                 </div>
                 <button type="submit" class="btn btn-primary mb-3">Enviar</button>
-                <div class="mb-3">
-                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#signUp">¿No tienes una cuenta todavía?</button>
-                </div>
                 </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#signUp">¿No tienes una cuenta todavía?</button>
             </div>
         </div>
         </div>
@@ -65,8 +66,8 @@
         <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-            <h1 class="modal-title fs-5" id="SUModalLabel">Abrir una nueva cuenta</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h1 class="modal-title fs-5" id="SUModalLabel">Abrir una nueva cuenta</h1>
+                <button id="signUpDismiss" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form action="{% url 'sign-up' %}" method="POST">
@@ -103,5 +104,17 @@
     <footer class="py-5 bg-dark">
         <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Django Marketplace 2023</p></div>
     </footer>
+    <script>
+        $(document).ready(function() {
+            $('#signUp').on('show.bs.modal', function () {
+                // Cerrar el modal de Sign In cuando se abre el modal de Sign Up
+                $('#signIn').modal('hide');
+            });
+            $('.loginRequired').click(function (event) {
+                event.preventDefault();
+                $('#signIn').modal('show');
+            });
+        });
+    </script>
 </body>
 </html>

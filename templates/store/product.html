@@ -10,7 +10,7 @@
         <div class="row gx-4 gx-lg-5 align-items-center">   
             <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src="/media/{{product.photo}}" alt="{{product.name}}" /></div>
             <div class="col-md-6">
-                <div class="small mb-1">SKU: BST-498</div>
+                <div class="small mb-1">SKU: {{product.id}}</div>
                 <h1 class="display-5 fw-bolder">{{product.name}}</h1>
                 <div class="fs-5 mb-3">            
                     <span>${{product.price}}</span>
@@ -23,7 +23,7 @@
                     {% csrf_token %}
                     <input name="product_id" readonly value="{{product.id}}" hidden>
                     <input name="quantity" class="form-control text-center me-3" id="inputQuantity" type="number" min="1" max="{{product.stock}}" value="1" style="max-width: 3rem">
-                    <button class="btn btn-outline-dark flex-shrink-0" type="submit">
+                    <button class="{% if not request.user.is_authenticated %} loginRequired {% endif %}  btn btn-outline-dark flex-shrink-0" type="submit">
                         <i class="bi-cart-fill me-1"></i>
                         Add to cart
                     </button>
