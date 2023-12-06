@@ -51,22 +51,29 @@ class Product(models.Model):
         return self.name
 
 
-class Cart(models.Model):
+class Order(models.Model):
+    ORDER_STATUS = [
+        ("CA", "IN CART"),
+        ("PE", "PENDING"),
+        ("RE", "RECEIVED"),
+    ]
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField()
+    state = models.CharField(choices=ORDER_STATUS, default="CA")
 
     class Meta:
-        db_table = "carts"
+        db_table = "orders"
 
     def __str__(self):
-        return self.user + " Cart"
+        return self.user + " Order " + self.product.name
 
 
 class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    qualification = models.IntegerField()
+    rating = models.IntegerField()
     note = models.TextField()
 
     class Meta:

@@ -12,6 +12,10 @@
                     <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
                         {% for category in nav_categories %}
                         <li><a class="dropdown-item" href="{% url 'category' category.id %}">{{category.name}}</a></li>
+                        {% empty %}
+                        <li><a class="dropdown-item">Proximamente</a></li>
+                        <li><a class="dropdown-item">más</a></li>
+                        <li><a class="dropdown-item">categorías</a></li>
                         {% endfor %}
                     </ul>
                 </li>
@@ -30,7 +34,7 @@
                     Panel Admin
                 </a>
                 {% endif %}
-                <a type="button" class="btn order-1 btn-outline-dark ms-1" href="{% url 'sign-out' %}">
+                <a type="button" class="btn order-1 btn-outline-dark ms-1" href="/auth/sign-out/?next={{request.path}}">
                     <i class="bi-door-open-fill"></i>
                     Salir
                 </a>

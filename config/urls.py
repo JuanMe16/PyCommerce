@@ -19,6 +19,10 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+# Custom Error 404 Page
+
+handler404 = "apps.core.views.custom_404_error"
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('apps.core.urls')),
@@ -26,5 +30,5 @@ urlpatterns = [
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 admin.site.index_title = "Django Marketplace"
-admin.site.site_header = "Django Market Admin"
+admin.site.site_header = "Market Admin"
 admin.site.site_title = "Panel"

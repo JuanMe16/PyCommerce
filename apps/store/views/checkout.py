@@ -3,12 +3,12 @@ from django.http import HttpRequest
 from django.contrib import messages
 from django.shortcuts import redirect
 from .search import BaseTemplateView
-from ..models import Product, Cart
+from ..models import Product, Order
 
 
-def delete_cart_product(cart_id):
-    cart = Cart.objects.get(id=cart_id)
-    cart.delete()
+def delete_order_product(Order_id):
+    order = Order.objects.get(id=Order_id)
+    order.delete()
 
 
 class CheckoutView(BaseTemplateView):
@@ -17,7 +17,7 @@ class CheckoutView(BaseTemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        checkout_products = Cart.objects.filter(user=user)
+        checkout_products = Order.objects.filter(user=user)
         products = [
             Product.objects.get(id=product["product_id"])
             for product in checkout_products.values()
@@ -47,27 +47,27 @@ class PurchaseView(View):
         try:
             user = request.user
             product = Product.objects.get(id=product_id)
-            existing_cart = Cart.objects.filter(user=user, product=product).first()
+            existing_order = Order.objects.filter(user=user, product=product).first()
 
             if quantity > product.stock:
                 self.print_message(request)
                 return redirect(f"/product/{product_id}")
 
-            if existing_cart is None:
-                new_cart = Cart.objects.create(
+            if existing_order is None:
+                new_order = Order.objects.create(
                     user=user, product=product, quantity=quantity
                 )
-                new_cart.save()
+                new_order.save()
                 messages.success(
                     request, f"{quantity} {product.name} se añadieron a su carrito!"
                 )
             else:
-                if existing_cart.quantity + quantity > product.stock:
+                if existing_order.quantity + quantity > product.stock:
                     self.print_message(request)
                     return redirect(f"/product/{product_id}")
 
-                existing_cart.quantity += quantity
-                existing_cart.save()
+                existing_order.quantity += quantity
+                existing_order.save()
         except Exception:
             messages.warning(
                 request, "Un error ha ocurrido, no se pudo procesar la compra."
@@ -81,23 +81,22 @@ class PurchaseOperationsView(View):
         return None
 
     def get(self, request: HttpRequest, *_, **kwargs):
-        cart_id = kwargs.get("checkout_product", None)
-        print(cart_id)
-        if cart_id is None:
+        order_id = kwargs.get("checkout_product", None)
+        if order_id is None:
             messages.warning(
                 request, "El producto no ha podido ser eliminado de su carrito."
             )
 
         try:
-            cart = Cart.objects.get(id=cart_id)
-            product = Product.objects.get(id=cart.product.id)
-            cart.quantity += self.operation()
-            if cart.quantity > product.stock:
+            order = Order.objects.get(id=order_id)
+            product = Product.objects.get(id=order.product.id)
+            order.quantity += self.operation()
+            if order.quantity > product.stock:
                 messages.warning(request, "No hay más de ese producto.")
-            elif cart.quantity == 0:
-                delete_cart_product(cart_id)
+            elif order.quantity == 0:
+                delete_order_product(order_id)
             else:
-                cart.save()
+                order.save()
         except Exception as err:
             print(err)
             messages.warning(request, "Este producto no esta en su carro.")
@@ -117,11 +116,11 @@ class RemovePurchaseView(PurchaseOperationsView):
 
 class DeletePurchaseView(View):
     def get(self, request: HttpRequest, *_, **kwargs):
-        cart_id = kwargs.get("checkout_product", None)
-        if cart_id is None:
+        order_id = kwargs.get("checkout_product", None)
+        if order_id is None:
             messages.warning(
                 request, "El product no ha podido ser eliminado de su carrito."
             )
 
-        delete_cart_product(cart_id)
+        delete_order_product(order_id)
         return redirect("checkout")

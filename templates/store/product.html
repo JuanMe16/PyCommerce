@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load store_extras %}
 
 {% block title %} {{product.name}} {% endblock %}
 
@@ -10,7 +11,7 @@
         <div class="row gx-4 gx-lg-5 align-items-center">   
             <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src="/media/{{product.photo}}" alt="{{product.name}}" /></div>
             <div class="col-md-6">
-                <div class="small mb-1">SKU: {{product.id}}</div>
+                <div class="small mb-1">SKU: {{category}}-{{product.id}}</div>
                 <h1 class="display-5 fw-bolder">{{product.name}}</h1>
                 <div class="fs-5 mb-3">            
                     <span>${{product.price}}</span>
@@ -57,8 +58,78 @@
                     </div>
                 </div>
             </div>
+            {% empty %}
+            <div class="card vw-100 text-center py-4">
+              <img style="object-fit: scale-down;" width="400" class="mx-auto" src="{% static 'images/empty/empty.img' %}" alt="beach">
+              <h1>Sin más productos relacionados por ahora...</h1>
+            </div>
             {% endfor %}
         </div>
+    </div>
+</section>
+<!-- Reviews Section -->
+<section>
+    <div class="container my-5 py-5">
+      <div class="row d-flex justify-content-center">
+        <div class="col-md-12 col-lg-10 col-xl-8">
+          <!-- Review Form -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="card-title text-primary">Deja tu opinión</h5>
+            </div>
+            <div class="card-body">
+              <form action="/save-review/{{product.id}}/?next={{request.path}}" method="POST">
+                {% csrf_token %}
+                <div class="form-floating mb-3 mt-1">
+                  <input type="text" class="form-control" id="comment" placeholder="Deja tu comentario" name="comment">
+                  <label for="comment">Comentario</label>
+                </div>
+                <div class="form-floating mb-3">
+                  <select class="form-select" id="rate" name="rate">
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                  </select>
+                  <label for="rate" class="form-label">Calificación <i class="bi bi-star-fill"></i></label>
+                </div>
+                <button class="btn btn-outline-primary" type="submit">Publicar</button>
+              </form>
+            </div>
+          </div>
+          {% for review in reviews %}
+          <!-- Review Template -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="card-title text-primary">{{review.user.email|email_cut}}</h5>
+            </div>
+
+            <div class="card-body">
+              <p class="mt-1 mb-2 py-1">
+                {{review.note}}
+              </p>
+            </div>
+
+            <div class="card-footer">
+              <div class="small d-flex justify-content-start text-primary">
+                <i class="bi bi-star-fill me-2"></i>
+                <span>{{review.rating}}</span>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5>Sin comentarios... ☀️🌵</h5>
+              <p>
+                Ya sabes, siempre puedes comprar el producto para darle una revisión y ser el primero! o volver más tarde, para conocer lo que opinan otros usuarios de este producto.
+              </p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
     </div>
 </section>
 {% endblock %}

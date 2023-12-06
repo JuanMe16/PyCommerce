@@ -36,7 +36,7 @@
                 <button id="signInDismiss" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="{% url 'sign-in' %}" method="POST">
+                <form action="/auth/sign-in/?next={{request.path}}" method="POST">
                 {% csrf_token %}
                 <div class="mb-3">
                     <label for="exampleInputNameSI" class="form-label">Dirección de correo</label>
@@ -70,7 +70,7 @@
                 <button id="signUpDismiss" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="{% url 'sign-up' %}" method="POST">
+                <form action="/auth/sign-up/?next={{request.path}}" method="POST">
                 {% csrf_token %}
                 <div class="mb-3">
                     <label for="exampleInputName" class="form-label">Nombre</label>

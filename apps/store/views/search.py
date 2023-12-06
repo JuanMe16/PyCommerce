@@ -1,5 +1,5 @@
 from django.views.generic import TemplateView
-from ..models import Product, Category, Cart
+from ..models import Product, Category, Order, Review
 
 
 class BaseTemplateView(TemplateView):
@@ -8,7 +8,7 @@ class BaseTemplateView(TemplateView):
         context["nav_categories"] = Category.objects.values()
         context["cart_products"] = 0
         if self.request.user.is_authenticated:
-            context["cart_products"] = Cart.objects.filter(
+            context["cart_products"] = Order.objects.filter(
                 user=self.request.user
             ).count()
         context["category_name"] = "Central de ventas"
@@ -65,12 +65,15 @@ class ProductView(BaseTemplateView):
         product_id = kwargs.get("product_id", 0)
         try:
             product = Product.objects.get(id=product_id)
+            category = Category.objects.get(id=product.category_id)
             related_products = (
                 Product.objects.filter(category=product.category)
                 .exclude(id=product.id)
                 .values()
             )
             context["product"] = product
+            context["category"] = category.name[:3].upper()
+            context["reviews"] = Review.objects.filter(product=product_id)[:5]
             context["related_products"] = related_products
         except:
             self.template_name = "not_found.html"
