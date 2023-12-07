@@ -15,7 +15,6 @@ class User(AbstractUser):
     photo = models.ImageField(
         upload_to=locate_profile_photo, default="profile/default.png", blank=True
     )
-    stripe_id = models.TextField(blank=True, null=True)
 
     objects = UserManager()
 

@@ -4,10 +4,9 @@ from django.contrib import messages
 from django.http.request import HttpRequest
 from apps.core.models import User
 from django.contrib.auth import authenticate, login, logout
-from .utils import create_customer
 
 
-def custom_404_error(request, exception):
+def custom_404_error(request, _):
     return render(request, "not_found.html", status=404)
 
 
@@ -30,8 +29,6 @@ class SignUpView(View):
 
         if (terms == "on") and (username and email and password):
             new_user = User.objects.create_user(email, password)
-            customer_id = create_customer(username, email)
-            new_user.stripe_id = customer_id
             new_user.save()
             messages.success(
                 request, "Usuario guardado con exito! inicia sesión nuevamente."

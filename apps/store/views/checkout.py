@@ -1,9 +1,12 @@
 from django.views import View
 from django.http import HttpRequest
 from django.contrib import messages
-from django.shortcuts import redirect
+from django.urls import reverse
+from django.shortcuts import redirect, HttpResponse
+from django.conf import settings
 from .search import BaseTemplateView
 from ..models import Product, Order
+import stripe
 
 
 def delete_order_product(Order_id):
@@ -29,6 +32,16 @@ class CheckoutView(BaseTemplateView):
         context["subtotal"] = sum(
             [product_dict.quantity * product.price for product_dict, product in zip_sum]
         )
+        context["key"] = settings.STRIPE_PUBLIC_KEY
+        context["stripe_price"] = context["subtotal"] * 100
+        payment_intent = stripe.PaymentIntent.create(
+            api_key=settings.STRIPE_SECRET_KEY,
+            amount=context["stripe_price"],
+            description="Django-Marketplace Cart",
+            currency="usd"
+        )
+        context["client_secret"] = payment_intent.client_secret
+        context["return_url"] = self.request.build_absolute_uri(reverse('charge'))
         return context
 
 
@@ -124,3 +137,8 @@ class DeletePurchaseView(View):
 
         delete_order_product(order_id)
         return redirect("checkout")
+
+
+class ChargeView(View):
+    def get(self, request: HttpRequest):
+        return HttpResponse('Que fue causinha')

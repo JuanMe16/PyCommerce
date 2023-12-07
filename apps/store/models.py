@@ -18,6 +18,7 @@ class Address(models.Model):
 
     class Meta:
         db_table = "addresses"
+        verbose_name_plural = "addresses"
 
     def __str__(self):
         return self.country + self.city + self.street
@@ -30,6 +31,7 @@ class Category(models.Model):
 
     class Meta:
         db_table = "categories"
+        verbose_name_plural = "categories"
 
     def __str__(self):
         return self.name
@@ -77,7 +79,7 @@ class Review(models.Model):
     note = models.TextField()
 
     class Meta:
-        db_table = "comments"
+        db_table = "reviews"                                                        
 
     def __str__(self):
         return self.note
