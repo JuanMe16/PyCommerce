@@ -34,7 +34,7 @@ ALLOWED_HOSTS = []
 JAZZMIN_SETTINGS = {
     "site_logo": "images/django.icon.png",
     "topmenu_links": [
-        {"name": "View site", "url": "/", "new_window": False},
+        {"name": "🔍", "url": "/", "new_window": False},
     ],
 }
 

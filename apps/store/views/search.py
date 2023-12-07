@@ -9,7 +9,7 @@ class BaseTemplateView(TemplateView):
         context["cart_products"] = 0
         if self.request.user.is_authenticated:
             context["cart_products"] = Order.objects.filter(
-                user=self.request.user
+                user=self.request.user,state='CA'
             ).count()
         context["category_name"] = "Central de ventas"
         return context

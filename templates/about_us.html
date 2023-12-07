@@ -4,19 +4,19 @@
 {% block title %} Sobre nosotros {% endblock %}
 
 {% block content %}
-<style>
-    .about-bg {
-        background-image: url("{% static 'images/about.bg.png' %}");
-        background-size: cover;
-    }
-</style>
-<div class="about-bg d-flex align-items-center justify-content-center vh-100">
-    <div class="card bg-dark bg-opacity-75 text-center w-50 p-5">
-        <h1 class="display-1 fw-bold">🦎</h1>
-        <p class="fs-3 fw-bolder text-primary">Django Marketplace</p>
-        <p class="lead text-light mx-auto text-start">
-            Plantilla de e-marketplace creada por Juan Mena alias Vaatu, en donde puedes administrar tu propio sitio web enfocado a vender productos de tu tienda, ya sean videojuegos, cómida o productos de higiene, esta aplicación web tiene distintas herramientas que te ayudaran a darle seguimiento a los productos y distintas demandas de los clientes, no olvides contactarme si así cómo ves de funcional esta pagina web quieres la propia tuya para tu empresa, startup o negocio emergente en el mundo digital!
-        </p>
+<section class="container-fluid p-3">
+    <div class="row justify-content-center">
+        <div class="col-11 col-lg-12 col-xl-7 my-auto">
+            <img class="img-fluid rounded" src="{% static 'images/about.bg.png' %}">
+        </div>
+        <div class="col-11 col-lg-12 col-xl-4 py-5">
+            <div>
+                <h3 class="fs-3 fw-bolder text-primary">Django Marketplace</h3>
+            </div>
+            <p class="fs-4 pt-2 lead text-start">
+                Plantilla de e-marketplace creada por Juan Mena alias Vaatu, en donde puedes administrar tu propio sitio web enfocado a vender productos de tu tienda, ya sean videojuegos, cómida o productos de higiene, esta aplicación web tiene distintas herramientas que te ayudaran a darle seguimiento a los productos y distintas demandas de los clientes, no olvides contactarme si así cómo ves de funcional esta pagina web quieres la propia tuya para tu empresa, startup o negocio emergente en el mundo digital!
+            </p>
+        </div>
     </div>
-</div>
+</section>
 {% endblock %}

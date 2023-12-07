@@ -2,7 +2,7 @@ from django.views import View
 from django.http import HttpRequest
 from django.contrib import messages
 from django.urls import reverse
-from django.shortcuts import redirect, HttpResponse
+from django.shortcuts import redirect, render
 from django.conf import settings
 from .search import BaseTemplateView
 from ..models import Product, Order
@@ -20,28 +20,32 @@ class CheckoutView(BaseTemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        checkout_products = Order.objects.filter(user=user)
-        products = [
-            Product.objects.get(id=product["product_id"])
-            for product in checkout_products.values()
-        ]
-        ziped_products = zip(checkout_products, products)
-        zip_sum = zip(checkout_products, products)
-        context["count"] = checkout_products.count()
-        context["checkout_products"] = ziped_products
-        context["subtotal"] = sum(
-            [product_dict.quantity * product.price for product_dict, product in zip_sum]
-        )
-        context["key"] = settings.STRIPE_PUBLIC_KEY
-        context["stripe_price"] = context["subtotal"] * 100
-        payment_intent = stripe.PaymentIntent.create(
-            api_key=settings.STRIPE_SECRET_KEY,
-            amount=context["stripe_price"],
-            description="Django-Marketplace Cart",
-            currency="usd"
-        )
-        context["client_secret"] = payment_intent.client_secret
-        context["return_url"] = self.request.build_absolute_uri(reverse('charge'))
+        checkout_products = Order.objects.filter(user=user, state="CA")
+        if not (checkout_products.count() <= 0):
+            products = [
+                Product.objects.get(id=product["product_id"])
+                for product in checkout_products.values()
+            ]
+            ziped_products = zip(checkout_products, products)
+            zip_sum = zip(checkout_products, products)
+            context["count"] = checkout_products.count()
+            context["checkout_products"] = ziped_products
+            context["subtotal"] = sum(
+                [
+                    product_dict.quantity * product.price
+                    for product_dict, product in zip_sum
+                ]
+            )
+            context["key"] = settings.STRIPE_PUBLIC_KEY
+            context["stripe_price"] = context["subtotal"] * 100
+            payment_intent = stripe.PaymentIntent.create(
+                api_key=settings.STRIPE_SECRET_KEY,
+                amount=context["stripe_price"],
+                description="Django-Marketplace Cart",
+                currency="usd",
+            )
+            context["client_secret"] = payment_intent.client_secret
+            context["return_url"] = self.request.build_absolute_uri(reverse("charge"))
         return context
 
 
@@ -141,4 +145,20 @@ class DeletePurchaseView(View):
 
 class ChargeView(View):
     def get(self, request: HttpRequest):
-        return HttpResponse('Que fue causinha')
+        payment_intent = request.GET.get("payment_intent", None)
+        context = {}
+        try:
+            stripe_intent = stripe.PaymentIntent.retrieve(
+                id=payment_intent, api_key=settings.STRIPE_SECRET_KEY
+            )
+            if stripe_intent.status == "succeeded":
+                cart_orders = Order.objects.filter(user=request.user)
+                cart_orders.update(state="PE")
+                context["message"] = "Gracias por comprar con nosotros!"
+            else:
+                context["message"] = "Tu compra esta siendo procesada."
+        except Exception:
+            context[
+                "message"
+            ] = "Hubo un error en la compra, intenta de nuevo más tarde."
+        return render(request, "store/paid.html", context)

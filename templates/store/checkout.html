@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load store_extras %}
 
 {% block title %} Carrito de compras {% endblock %} 
@@ -67,13 +68,24 @@
                   <div class="card-body">
                     <div class="d-flex align-items-center mb-4">
                       <h5 class="mb-0">Información de Pago</h5>
-                      <i class="bi bi-credit-card-fill ms-2"></i>
                     </div>
 
                     <form id="payment-form" action="{% url 'charge' %}" method="POST" class="mt-4">
                       {% csrf_token %}
 
-                      <div style="min-height: 250px;" class="my-3" id="card-element"></div>
+                      <div id="card-error" class="my-3 alert alert-danger alert-dismissible" role="alert" hidden>
+                        <div id="error-message"></div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                      </div>
+
+                      {% if not key %}
+                      <img width="450" class="img-fluid" src="{% static 'images/empty/empty.img' %}">
+                      {% else %}
+                      <img width="120" class="img-fluid text-center" src="{% static 'images/card.img.png' %}">
+                      {% endif %}
+
+                      <div class="mt-2" id="card-element">
+                      </div>
 
                       <hr class="my-4" />
 
@@ -124,7 +136,7 @@
       }
     });
     var addressElement = elements.create('address', {
-      mode: 'billing'
+      mode: 'shipping'
     });
     paymentElement.mount("#card-element");
 
@@ -133,6 +145,7 @@
     var form = document.getElementById("payment-form");
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
+      form.disabled = true;
 
       stripe.confirmPayment({
         elements,
@@ -148,6 +161,8 @@
       }).then(function (result) {
         if (result.error) {
           // Inform the customer that there was an error.
+          $("#card-error").removeAttr("hidden");
+          $("#error-message").text(result.error.message);
         }
       });
     });

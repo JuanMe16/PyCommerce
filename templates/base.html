@@ -14,7 +14,9 @@
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
-    {% include 'navbar.html' %}
+    <header>
+        {% include 'navbar.html' %}
+    </header>
 
     {% if messages %}
         {% for message in messages %}
@@ -25,8 +27,10 @@
         {% endfor %}
     {% endif %}
 
-    {% block content %}
-    {% endblock %}
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
 
     <!-- Sign In Modal -->
     <div class="modal fade" id="signIn" tabindex="-1" aria-labelledby="SIModalLabel" aria-hidden="true">

@@ -52,6 +52,11 @@
                     </div>
                 </div>
             </div>
+            {% empty %}
+            <div class="w-100 mb-3 text-center">
+                <img width="600" class="img-fluid" src="{% static 'images/empty/empty2.img' %}">
+                <h4 class="py-4">Estamos preparando las mejores ofertas para ti, solo debes esperar un poco más</h4>
+            </div>
             {% endfor %}
         </div>
     </div>
