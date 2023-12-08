@@ -1,8 +1,10 @@
 asgiref==3.7.2
 certifi==2023.11.17
 charset-normalizer==3.3.2
+crispy-bootstrap5==2023.10
 dj-database-url==2.1.0
 Django==4.2.7
+django-crispy-forms==2.1
 django-jazzmin==2.6.0
 idna==3.6
 Pillow==10.1.0

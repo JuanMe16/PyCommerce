@@ -5,7 +5,6 @@ from django.http.request import HttpRequest
 from apps.core.models import User
 from django.contrib.auth import authenticate, login, logout
 
-
 def custom_404_error(request, _):
     return render(request, "not_found.html", status=404)
 
@@ -16,7 +15,8 @@ class SignUpView(View):
     """
 
     def post(self, request: HttpRequest):
-        username = request.POST.get("username", None)
+        firstname = request.POST.get("firstname", None)
+        lastname = request.POST.get("lastname", None)
         email = request.POST.get("email", None)
         password = request.POST.get("password", None)
         cpassword = request.POST.get("cpassword", None)
@@ -27,8 +27,10 @@ class SignUpView(View):
             messages.warning(request, "Contraseña invalida")
             return render(request, "core/index.html")
 
-        if (terms == "on") and (username and email and password):
+        if (terms == "on") and (firstname and lastname and email and password):
             new_user = User.objects.create_user(email, password)
+            new_user.first_name = firstname
+            new_user.last_name = lastname
             new_user.save()
             messages.success(
                 request, "Usuario guardado con exito! inicia sesión nuevamente."

@@ -45,4 +45,9 @@ urlpatterns = [
         login_required(views.ChargeView.as_view(), login_url="index"),
         name="charge",
     ),
+    path(
+        "save-address/",
+        login_required(views.ShippingView.as_view(), login_url="index"),
+        name="save-address",
+    ),
 ]

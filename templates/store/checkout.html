@@ -1,10 +1,29 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load store_extras %}
+{% load crispy_forms_tags %}
 
-{% block title %} Carrito de compras {% endblock %} 
+{% block title %} Carrito de compras {% endblock %}
 
 {% block content %}
+<!-- Shipping Modal -->
+<div class="modal fade" id="shipping" tabindex="-1" aria-labelledby="ShipModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="ShipModalLabel">Información de envio.</h1>
+        <button id="signUpDismiss" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form class="form-control" action="{% url 'save-address' %}" method="POST">
+          {% csrf_token %}
+          {{form|crispy}}
+          <button class="btn btn-primary" type="submit">Guardar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 <section class="h-100 h-custom" style="background-color: #eee">
   <div class="container py-5 h-100">
     <div class="row d-flex justify-content-center align-items-center h-100">
@@ -21,7 +40,19 @@
 
                 <div class="d-flex justify-content-between align-items-center mb-4">
                   <div>
-                    <p class="mb-1">Carritos de compra</p>
+                    <h5>Información de envio</h5>
+                    {% if address.street %}
+                    <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#shipping">
+                      {{address.street}}
+                    </button>
+                    {% else %}
+                    <button class="btn" data-bs-toggle="modal" data-bs-target="#shipping">
+                      <div class="alert alert-danger">Por favor llene su información de envio</div>
+                    </button>
+                    {% endif %}
+                  </div>
+                  <div>
+                    <p class="mb-1 text-end">Carritos de compra</p>
                     <p class="mb-0">Tienes {{count}} producto(s) en tu carro</p>
                   </div>
                 </div>
@@ -70,7 +101,7 @@
                       <h5 class="mb-0">Información de Pago</h5>
                     </div>
 
-                    <form id="payment-form" action="{% url 'charge' %}" method="POST" class="mt-4">
+                    <form style="min-height: 400px;" id="payment-form" action="{% url 'charge' %}" method="POST" class="mt-4">
                       {% csrf_token %}
 
                       <div id="card-error" class="my-3 alert alert-danger alert-dismissible" role="alert" hidden>
@@ -95,11 +126,17 @@
                         <p class="mb-2 fs-2">${{subtotal}}</p>
                       </div>
 
-                      <button type="submit" class="btn btn-info btn-block btn-lg">
+                      {% if address.street %}
+                      <button id="checkoutButton" type="submit" class="btn btn-info btn-block btn-lg">
                         <div class="d-flex justify-content-between">
                           <span>Pagar Carrito<i class="bi bi bi-arrow-right ms-2"></i></span>
                         </div>
                       </button>
+                      {% else %}
+                      <div class="d-flex justify-content-between">
+                        <span>Se requiere que llenes tu información de envio primero...</span>
+                      </div>                    
+                      {% endif %}
                     </form>
 
                     {% else %}
@@ -113,6 +150,7 @@
                   </div>
                 </div>
               </div>
+
             </div>
           </div>
         </div>
@@ -132,11 +170,16 @@
         billingDetails: {
           name: 'never',
           email: 'never',
+          address: {
+            line1: 'never',
+            city: 'never',
+            country: 'never',
+            postalCode: 'never',
+            line2: 'never',
+            state: 'never'
+          }
         }
       }
-    });
-    var addressElement = elements.create('address', {
-      mode: 'shipping'
     });
     paymentElement.mount("#card-element");
 
@@ -153,8 +196,16 @@
           return_url: "{{return_url}}",
           payment_method_data: {
             billing_details: {
-              name: '{{request.user.email|email_cut}}',
+              name: '{{request.user.first_name}}{{request.user.last_name}}',
               email: '{{request.user.email}}',
+              address: {
+                line1: '{{address.street}}',
+                city: '{{address.city}}',
+                country: '{{address.country}}',
+                postal_code: '{{address.postal_code}}',
+                line2: '{{address.street}}',
+                state: '{{address.city}}'
+              }
             }
           },
         },

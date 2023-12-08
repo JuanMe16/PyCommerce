@@ -77,9 +77,15 @@
             <div class="modal-body">
                 <form action="/auth/sign-up/?next={{request.path}}" method="POST">
                 {% csrf_token %}
-                <div class="mb-3">
-                    <label for="exampleInputName" class="form-label">Nombre</label>
-                    <input name="username" placeholder="John" type="text" class="form-control" id="exampleInputName">
+                <div class="d-flex justify-content-between mb-3">
+                    <div>
+                        <label for="InputFirstName" class="form-label">Nombres</label>
+                        <input name="firstname" placeholder="John" type="text" class="form-control" id="InputFirstName">
+                    </div>
+                    <div>
+                        <label for="InputLastName" class="form-label">Apellidos</label>
+                        <input name="lastname" placeholder="Jimenez" type="text" class="form-control" id="InputLastName">
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label for="exampleInputEmailSU" class="form-label">Dirección de correo</label>

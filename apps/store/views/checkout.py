@@ -5,13 +5,29 @@ from django.urls import reverse
 from django.shortcuts import redirect, render
 from django.conf import settings
 from .search import BaseTemplateView
-from ..models import Product, Order
+from ..models import Product, Order, Address
+from ..utils import context_builder
+from ..forms import ShippingForm
 import stripe
 
 
 def delete_order_product(Order_id):
     order = Order.objects.get(id=Order_id)
     order.delete()
+
+
+class ShippingView(View):
+    def post(self, request: HttpRequest):
+        form = ShippingForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            user_address = Address.objects.filter(user=request.user)
+            if user_address.first():
+                user_address.update(**data)
+            else:
+                user_address = Address.objects.create(user=request.user, **data)
+                user_address.save()
+            return redirect("checkout")
 
 
 class CheckoutView(BaseTemplateView):
@@ -26,25 +42,15 @@ class CheckoutView(BaseTemplateView):
                 Product.objects.get(id=product["product_id"])
                 for product in checkout_products.values()
             ]
-            ziped_products = zip(checkout_products, products)
-            zip_sum = zip(checkout_products, products)
-            context["count"] = checkout_products.count()
-            context["checkout_products"] = ziped_products
-            context["subtotal"] = sum(
-                [
-                    product_dict.quantity * product.price
-                    for product_dict, product in zip_sum
-                ]
-            )
-            context["key"] = settings.STRIPE_PUBLIC_KEY
-            context["stripe_price"] = context["subtotal"] * 100
-            payment_intent = stripe.PaymentIntent.create(
-                api_key=settings.STRIPE_SECRET_KEY,
-                amount=context["stripe_price"],
-                description="Django-Marketplace Cart",
-                currency="usd",
-            )
-            context["client_secret"] = payment_intent.client_secret
+            context = context_builder(context, checkout_products, products)
+            user_address = Address.objects.filter(user=self.request.user).first()
+            if user_address:
+                data = user_address.__dict__
+                context["form"] = ShippingForm(data)
+                context["address"] = data
+            else:
+                context["form"] = ShippingForm()
+                context["address"] = "No tenemos aún tu dirección."
             context["return_url"] = self.request.build_absolute_uri(reverse("charge"))
         return context
 
@@ -143,7 +149,7 @@ class DeletePurchaseView(View):
         return redirect("checkout")
 
 
-class ChargeView(View):
+class ChargeView(BaseTemplateView):
     def get(self, request: HttpRequest):
         payment_intent = request.GET.get("payment_intent", None)
         context = {}

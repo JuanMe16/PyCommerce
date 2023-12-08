@@ -9,8 +9,15 @@ def locate_product_img(instance, filename: str):
 
 
 class Address(models.Model):
+    AVAILABLE_COUNTRIES = [
+        ("CO", "Colombia"),
+        ("ES", "España"),
+        ("AR", "Argentina"),
+        ("CL", "Chile"),
+    ]
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    country = models.CharField(max_length=120)
+    country = models.CharField(choices=AVAILABLE_COUNTRIES)
     city = models.CharField(max_length=120)
     street = models.CharField(max_length=140)
     postal_code = models.IntegerField()
@@ -79,7 +86,7 @@ class Review(models.Model):
     note = models.TextField()
 
     class Meta:
-        db_table = "reviews"                                                        
+        db_table = "reviews"
 
     def __str__(self):
         return self.note
